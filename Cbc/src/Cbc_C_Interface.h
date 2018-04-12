@@ -90,13 +90,36 @@ extern "C" {
     Cbc_readLp(Cbc_Model * model, const char *filename)
     ;
     /** Add rows */
-    COINLIBAPI void COINLINKAGE Clp_addRows(Cbc_Model * model, int number,
+    COINLIBAPI void COINLINKAGE
+    Cbc_addRows(Cbc_Model * model, int number,
                                     const double * rowLower, const double * rowUpper,
                                     const CoinBigIndex * rowStarts, const int * columns,
                                     const double * elements)
     ;
+    COINLIBAPI void COINLINKAGE
+    Cbc_deleteRows(Cbc_Model * model, const int num, const int * rowIndices)
+    ;
 
-    /** Provide an initial feasible solution to accelerate branch-and-bound
+    COINLIBAPI void COINLINKAGE
+    Cbc_addColumns(Cbc_Model * model, const int numcols,
+                        const double* colLower, const double* colUpper, const double* obj,
+                        const CoinBigIndex * colStarts, const int * rows,
+                        const double * elements)
+    ;
+
+    COINLIBAPI void COINLINKAGE
+    Cbc_deleteColumns(Cbc_Model * model, const int num, const int * columnIndices)
+    ;
+
+    COINLIBAPI const double * COINLINKAGE
+    Cbc_getRowPrice(Cbc_Model * model)
+    ;
+
+    COINLIBAPI void COINLINKAGE
+    Cbc_setRowPrice(Cbc_Model * model, const double * rowprice)
+    ;
+
+/** Provide an initial feasible solution to accelerate branch-and-bound
      Note that feasibility of the solution is *not* verified.
     */
     COINLIBAPI void COINLINKAGE

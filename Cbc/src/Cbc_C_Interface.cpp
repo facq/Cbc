@@ -16,7 +16,6 @@
 
 #include "CoinMessageHandler.hpp"
 #include "OsiClpSolverInterface.hpp"
-#include "CoinPackedVector.hpp"
 
 //  bobe including extras.h to get strdup()
 #if defined(__MWERKS__)
@@ -380,6 +379,9 @@ const double * elements)
 {
     OsiSolverInterface * solver = model->model_->solver();
 
+    solver->addRows(number, rowStarts, columns, elements, rowLower, rowUpper);
+
+#ifdef A_SUPPRIMER
     CoinPackedVector * rows[number], cr;
 
     double * e=(double *)elements;
@@ -394,8 +396,9 @@ const double * elements)
             cr.insert(*(idx++),*(e++));
         }
     }
+#endif
 
-    solver->addRows(number, (const CoinBigIndex * const *)rows, rowLower, rowUpper);
+//    solver->addRows(number, (const CoinBigIndex * const *)rows, rowLower, rowUpper);
     /**
      * virtual void addRows(const int numrows,
                        const CoinPackedVectorBase * const * rows,
@@ -407,6 +410,48 @@ const double * elements)
                      */
 }
 
+COINLIBAPI void COINLINKAGE
+Cbc_deleteRows(Cbc_Model * model, int number, const int * rowIndices)
+{
+    OsiSolverInterface *solver = model->model_->solver();
+
+    solver->deleteRows(number, rowIndices);
+}
+
+COINLIBAPI void COINLINKAGE
+Cbc_addColumns(Cbc_Model * model, const int numcols,
+                const double* colLower, const double* colUpper, const double* obj,
+                const CoinBigIndex * colStarts, const int * rows,
+                const double * elements)
+{
+    OsiSolverInterface * solver = model->model_->solver();
+
+    solver->addCols(numcols, colStarts, rows, elements, colLower, colUpper, obj);
+}
+
+COINLIBAPI void COINLINKAGE
+Cbc_deleteColumns(Cbc_Model * model, int number, const int * columnIndices)
+{
+    OsiSolverInterface *solver = model->model_->solver();
+
+    solver->deleteCols(number, columnIndices);
+}
+
+COINLIBAPI const double * COINLINKAGE
+Cbc_getRowPrice(Cbc_Model * model)
+{
+    OsiSolverInterface * solver = model->model_->solver();
+
+    return solver->getRowPrice();
+}
+
+COINLIBAPI void COINLINKAGE
+Cbc_setRowPrice(Cbc_Model * model, const double * rowprice)
+{
+    OsiSolverInterface * solver = model->model_->solver();
+
+    solver->setRowPrice(rowprice);
+}
 
 COINLIBAPI void COINLINKAGE
 Cbc_setInitialSolution(Cbc_Model *model, const double * sol)
